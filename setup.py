@@ -53,7 +53,7 @@ setup(
     extras_require={
         # 'dev': ['check-manifest', 'wheel'],
         # 'doc': ['sphinx', 'cartouche'],
-        'test': ['hypothesis', 'pytest'],
+        'test': ['hypothesis', 'pytest', 'tox'],
     },
     entry_points={
         'console_scripts': [
