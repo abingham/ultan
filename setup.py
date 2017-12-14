@@ -30,7 +30,7 @@ setup(
 
     author='Sixty North AS',
     author_email='austin@sixty-north.com',
-    description='Python documentation server',
+    description='Python name and documentation server',
     license='MIT',
     keywords='',
     url='https://github.com/sixty-north/ultan',
@@ -38,7 +38,9 @@ setup(
         'Development Status :: 3 - Alpha',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     platforms='any',
     include_package_data=True,
@@ -54,9 +56,9 @@ setup(
         'test': ['hypothesis', 'pytest'],
     },
     entry_points={
-        # 'console_scripts': [
-        #    'ultan = ultan.cli:main',
-        # ],
+        'console_scripts': [
+           'ultan = ultan.web_app:main',
+        ],
     },
     long_description=long_description,
 )

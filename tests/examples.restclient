@@ -1,0 +1,13 @@
+# -*- mode: restclient -*-
+#
+# These are emacs restclient examples of how to use the API.
+
+#
+# Get all names containing 'http'
+#
+GET http://127.0.0.1:12345/get_names?pattern=http
+
+#
+# Get docs for 'uuid'
+#
+GET http://127.0.0.1:12345/get_doc?name=uuid
