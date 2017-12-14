@@ -42,7 +42,7 @@ def clear_cache():
     _cache = None
 
 
-def get_names(pattern):
+def get_names(pattern=''):
     _ensure_cache()
 
     return (name
