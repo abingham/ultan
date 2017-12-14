@@ -1,11 +1,12 @@
-# Get all root modules: IPython.core.completerlib.get_root_modules()
-# Given a module name, find all submodules and attributes: IPython.core.compleeterlib.try_import(<module name>)
-# https://docs.python.org/3/library/importlib.html#checking-if-a-module-can-be-imported
-
 import ast
+from contextlib import redirect_stderr, redirect_stdout
+import logging
+import os
 import pkgutil
 
 _cache = None
+
+log = logging.getLogger()
 
 
 def _find_top_level_names(tree):
@@ -21,68 +22,21 @@ def _find_top_level_names(tree):
 
 
 def _walk_namespace():
-    for minfo in pkgutil.walk_packages():
-        spec = minfo.module_finder.find_spec(minfo.name)
-        try:
-            with open(spec.origin, mode='rt') as handle:
-                source = handle.read()
-            tree = ast.parse(source)
-            for name in _find_top_level_names(tree):
-                yield '{}.{}'.format(minfo.name, name)
-        except UnicodeDecodeError:
-            print('unicode decode error: {}'.format(spec.origin))
-        except SyntaxError:
-            print('syntax error: {}'.format(spec.origin))
-
-    # with open(path, mode='rt') as handle:
-    #     source = handle.read()
-    # tree = ast.parse(source)
-    # for name in _find_top_level_names(tree):
-    #     yield '{}.{}'.format(the_minfo.name, name)
-
-    # root_names = root_names or clib.get_root_modules()
-    # objs = deque((name, None, None) for name in root_names)
-
-    # while objs:
-    #     name, base_obj, base_name = objs.pop()
-    #     print('popped', name, base_obj, base_name)
-
-    #     if base_obj is None:
-    #         # With no base object, we assume the name refers to a module.
-    #         # (global objects will get picked up in 'builtins').
-
-    #         # import the module
-    #         obj = importlib.import_module(name)
-
-    #         # Enqueue each of its submodule and attribute names into objs
-    #         for subname in clib.try_import(name, False):
-    #             print('appending', subname, obj, name)
-    #             objs.append((subname, obj, name))
-
-    #         yield name
-
-    #     else:
-    #         assert base_name
-
-    #         full_name = '{}.{}'.format(base_name, name)
-
-    #         print('finding spec', full_name)
-    #         import_spec = find_spec(full_name)
-    #         if import_spec:
-    #             obj = module_from_spec(import_spec)
-    #             for subname in clib.try_import(full_name):
-    #                 objs.append((subname, obj, full_name))
-
-    #         # print('is importable?', base_obj, name)
-    #         # if clib.is_importable(base_obj, name, True):
-    #         #     print('importing', name, base_obj)
-    #         #     obj = importlib.import_module(full_name)
-    #         #     for subname in clib.try_import(full_name, True):
-    #         #         print('> appending', subname, object, full_name)
-    #         #         objs.append((subname, obj, full_name))
-    #         #     yield full_name
-    #         # else:
-    #         #     obj = getattr(base_obj, name)
+    with open(os.devnull, mode='wt') as devnull,\
+         redirect_stderr(devnull),\
+         redirect_stdout(devnull):
+        for minfo in pkgutil.walk_packages():
+            spec = minfo.module_finder.find_spec(minfo.name)
+            try:
+                with open(spec.origin, mode='rt') as handle:
+                    source = handle.read()
+                tree = ast.parse(source)
+                for name in _find_top_level_names(tree):
+                    yield '{}.{}'.format(minfo.name, name)
+            except UnicodeDecodeError:
+                log.info('unicode decode error: %s', spec.origin)
+            except SyntaxError:
+                log.info('syntax error: %s', spec.origin)
 
 
 def _ensure_cache():
