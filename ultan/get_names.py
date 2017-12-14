@@ -1,9 +1,6 @@
-import ast
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 import logging
 import os
-import pkgutil
-import sys
 
 from .strategies import ast_walker, sys_modules_scanner
 

@@ -56,9 +56,9 @@ setup(
         'test': ['hypothesis', 'pytest'],
     },
     entry_points={
-        # 'console_scripts': [
-        #    'ultan = ultan.cli:main',
-        # ],
+        'console_scripts': [
+           'ultan = ultan.app:main',
+        ],
     },
     long_description=long_description,
 )
