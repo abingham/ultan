@@ -57,7 +57,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-           'ultan = ultan.app:main',
+           'ultan = ultan.web_app:main',
         ],
     },
     long_description=long_description,
