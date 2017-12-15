@@ -21,7 +21,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-long_description = read('README.md', mode='rt')
+long_description = read('README.rst', mode='rt')
 
 setup(
     name='ultan',
@@ -45,7 +45,8 @@ setup(
     platforms='any',
     include_package_data=True,
     install_requires=[
-        'aiohttp'
+        'aiohttp',
+        'docopt',
     ],
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax, for
