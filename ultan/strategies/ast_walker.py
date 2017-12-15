@@ -36,13 +36,13 @@ def _find_top_level_ast_names(module_node):
 
 def get_names():
     for minfo in pkgutil.walk_packages():
-        spec = minfo.module_finder.find_spec(minfo.name)
+        spec = minfo[0].find_spec(minfo[1])
         try:
             with open(spec.origin, mode='rt') as handle:
                 source = handle.read()
             tree = ast.parse(source)
             for name in _find_top_level_ast_names(tree):
-                yield '{}.{}'.format(minfo.name, name)
+                yield '{}.{}'.format(minfo[1], name)
         except UnicodeDecodeError:
             log.info('unicode decode error: %s', spec.origin)
         except SyntaxError:

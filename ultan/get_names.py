@@ -1,7 +1,8 @@
-from contextlib import contextmanager, redirect_stderr, redirect_stdout
+from contextlib import contextmanager
 import logging
 import os
 
+from .compat import redirect_stderr, redirect_stdout
 from .strategies import ast_walker, sys_modules_scanner
 
 _cache = None
@@ -26,7 +27,7 @@ def _squash_output(enabled=True):
 
 
 def _find_all_names():
-    with _squash_output():
+    with _squash_output(False):
         yield from ast_walker.get_names()
         yield from sys_modules_scanner.get_names()
 
