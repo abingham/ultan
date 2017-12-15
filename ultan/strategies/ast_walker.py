@@ -9,6 +9,10 @@
 import ast
 import logging
 import pkgutil
+from functools import singledispatch
+from importlib.machinery import FileFinder
+from zipimport import zipimporter, ZipImportError
+
 
 log = logging.getLogger()
 
@@ -34,16 +38,66 @@ def _find_top_level_ast_names(module_node):
         # TODO: nested stuff
 
 
+@singledispatch
+def _get_source(finder, module_name):
+    """Get the source code for `module_name` via its finder.
+
+    Returns: The source code for the module, or None if the source can't be
+      found.
+    """
+    log.info('unsupported finder type %s for module %s', finder, module_name)
+    return None
+
+
+@_get_source.register(FileFinder)
+def _(finder, module_name):
+    """Get source for a module imported via a FileFinder.
+    """
+    spec = finder.find_spec(module_name)
+    try:
+        with open(spec.origin, mode='rt') as handle:
+            return handle.read()
+    except OSError:
+        return None
+    except UnicodeDecodeError:
+            log.info('unicode decode error: %s', spec.origin)
+
+
+@_get_source.register(zipimporter)
+def _(finder, module_name):
+    """Get the source for a modules imported via a zipimporter.
+    """
+    try:
+        source = finder.get_source(module_name)
+    except ZipImportError:
+        log.info('could not find module %s in archive %s',
+                 module_name,
+                 finder.archive)
+        return None
+
+    if source is None:
+        log.info('no source for module %s in archive %s',
+                 module_name,
+                 finder.archive)
+
+    return source
+
+
 def get_names():
+    """Get an iterable of all names that can be found.
+    """
     for minfo in pkgutil.walk_packages():
-        spec = minfo[0].find_spec(minfo[1])
+        finder, name, ispkg = minfo
+
+        source = _get_source(finder, name)
+
+        if source is None:
+            log.info('no source found for module %s', name)
+            continue
+
         try:
-            with open(spec.origin, mode='rt') as handle:
-                source = handle.read()
             tree = ast.parse(source)
             for name in _find_top_level_ast_names(tree):
-                yield '{}.{}'.format(minfo[1], name)
-        except UnicodeDecodeError:
-            log.info('unicode decode error: %s', spec.origin)
+                yield '{}.{}'.format(name, name)
         except SyntaxError:
-            log.info('syntax error: %s', spec.origin)
+            log.info('syntax error in module %s', name)
