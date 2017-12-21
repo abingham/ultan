@@ -106,37 +106,6 @@
      :headers '(("Content-Type" . "application/json"))
      :data (json-encode data))))
 
-(defun company-ultan--prefix ()
-  (and
-   (not (company-in-string-or-comment))
-   (or (company-grab-symbol-cons "\\.\\|->\\|::\\|/" 2)
-       'stop)))
-
-(defun company-ultan--candidates (prefix)
-  (cons :async
-        (lambda (cb)
-          (deferred:$
-            (ultan-get-names prefix)
-            (deferred:nextc it
-              (lambda (rsp)
-                (let* ((candidate-vec (request-response-data rsp))
-                       (candidate-list (append candidate-vec nil)))
-                  (funcall cb candidate-list))))))))
-
-(defun company-ultan (command &optional arg &rest ignored)
-  "The company-backend command handler for ultan."
-  (interactive (list 'interactive))
-  (cl-case command
-    (interactive     (company-begin-backend 'company-ultan))
-    (prefix          (company-ultan--prefix))
-    (candidates      (company-ultan--candidates arg))))
-
-;;;###autoload
-(defun company-ultan-setup ()
-  "Add company-ultan to the front of company-backends."
-  (interactive)
-  (add-to-list 'company-backends 'company-ultan))
-
 (provide 'ultan)
 
 ;;; ultan.el ends here
