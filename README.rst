@@ -4,8 +4,8 @@
  ultan
 =======
 
-*"You know old Ultan, I take it? No, course not. If you did, you'd know the way
- to the library."* *— The Shadow of the Torturer, Gene Wolfe*
+*"You know old Ultan, I take it? No, course not. If you did, you'd know the way to the library."* 
+— The Shadow of the Torturer, Gene Wolfe
 
 
 ``ultan`` is a Python identifier and documentation server. It provides two main
