@@ -19,7 +19,7 @@ from aiohttp import web
 import docopt
 
 from .get_doc import get_doc
-from .get_names import get_names
+from .name_index import NameIndex
 from .version import __version__
 
 
@@ -31,22 +31,25 @@ def json(f):
     return wrapper
 
 
-@json
-async def handle_get_doc(request):
-    name = request.query['name']
-    try:
-        doc = get_doc(name)
-    except ValueError:
-        # TODO: Return 404 or something
-        return 'not found'
+class Handlers:
+    def __init__(self):
+        self.index = NameIndex()
 
-    return doc
+    @json
+    async def get_doc(self, request):
+        name = request.query['name']
+        try:
+            doc = get_doc(name)
+        except ValueError:
+            # TODO: Return 404 or something
+            return 'not found'
 
+        return doc
 
-@json
-async def handle_get_names(request):
-    pattern = request.query['pattern']
-    return list(get_names(pattern))
+    @json
+    async def get_names(self, request):
+        pattern = request.query['pattern']
+        return list(self.index.get_names(pattern))
 
 
 def main():
@@ -59,8 +62,9 @@ def main():
         return os.EX_CONFIG
 
     app = web.Application()
-    app.router.add_get('/get_doc', handle_get_doc)
-    app.router.add_get('/get_names', handle_get_names)
+    handlers = Handlers()
+    app.router.add_get('/get_doc', handlers.get_doc)
+    app.router.add_get('/get_names', handlers.get_names)
 
     return web.run_app(app, port=port)
 

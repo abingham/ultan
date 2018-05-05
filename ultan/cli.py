@@ -1,9 +1,10 @@
 import sys
-from .get_names import get_names
+from .name_index import NameIndex
 
 
 def main(argv):
-    for name in get_names(sys.argv[1]):
+    index = NameIndex()
+    for name in index.get_names(sys.argv[1]):
         print(name)
 
 
