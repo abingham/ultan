@@ -87,17 +87,17 @@ def get_names():
     """Get an iterable of all names that can be found.
     """
     for minfo in pkgutil.walk_packages():
-        finder, name, ispkg = minfo
+        finder, module_name, ispkg = minfo
 
-        source = _get_source(finder, name)
+        source = _get_source(finder, module_name)
 
         if source is None:
-            log.info('no source found for module %s', name)
+            log.info('no source found for module %s', module_name)
             continue
 
         try:
             tree = ast.parse(source)
             for name in _find_top_level_ast_names(tree):
-                yield '{}.{}'.format(name, name)
+                yield '{}.{}'.format(module_name, name)
         except SyntaxError:
             log.info('syntax error in module %s', name)
