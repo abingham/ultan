@@ -45,7 +45,6 @@ setup(
     platforms='any',
     include_package_data=True,
     install_requires=[
-        'aiohttp',
         'docopt',
     ],
     # List additional groups of dependencies here (e.g. development

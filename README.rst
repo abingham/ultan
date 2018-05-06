@@ -4,11 +4,11 @@
  ultan
 =======
 
-*"You know old Ultan, I take it? No, course not. If you did, you'd know the way to the library."* 
+*"You know old Ultan, I take it? No, course not. If you did, you'd know the way to the library."*
 — The Shadow of the Torturer, Gene Wolfe
 
 
-``ultan`` is a Python identifier and documentation server. It provides two main
+``ultan`` is a Python identifier and documentation provider. It has two main
 services:
 
 1. It can list all identifiers available in your current Python environment.
