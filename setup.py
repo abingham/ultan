@@ -45,7 +45,7 @@ setup(
     platforms='any',
     include_package_data=True,
     install_requires=[
-        'docopt',
+        'docopt_subcommands',
     ],
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax, for
@@ -57,7 +57,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-           'ultan = ultan.web_app:main',
+           'ultan = ultan.cli:main',
         ],
     },
     long_description=long_description,
