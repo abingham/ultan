@@ -18,14 +18,14 @@ def name_index():
 
 
 def test_get_names_only_returns_pattern_matches(name_index, pattern):
-    names = name_index.get_names(pattern)
-    for name in names:
+    matches = name_index.get_names(pattern)
+    for (name, module_name) in matches:
         assert pattern in name
 
 
 def test_gets_all_names_matching_a_pattern(name_index, pattern):
-    expected = [name for name
+    expected = [name for (name, _)
                 in name_index.get_names()
                 if pattern in name]
-    names = list(name_index.get_names(pattern))
+    names = [name for (name, _) in name_index.get_names(pattern)]
     assert expected == names

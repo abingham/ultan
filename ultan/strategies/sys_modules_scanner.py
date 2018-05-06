@@ -2,8 +2,11 @@
 
 import sys
 
+from ultan.strategies.strategy import Strategy
 
-def get_names():
-    for module in list(sys.modules.values()):
-        for name in module.__dict__:
-            yield '{}.{}'.format(module.__name__, name)
+
+class SysModulesStrategy(Strategy):
+    def get_names(self):
+        for module in list(sys.modules.values()):
+            for name in module.__dict__:
+                yield (name, module.__name__)

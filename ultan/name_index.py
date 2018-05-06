@@ -30,8 +30,9 @@ def _find_all_names():
     """Find all names in the Python environment.
     """
     with _squash_output(False):
-        yield from ast_walker.get_names()
-        yield from sys_modules_scanner.get_names()
+        for strategy in (ast_walker.ASTWalkerStrategy(),
+                         sys_modules_scanner.SysModulesStrategy()):
+            yield from strategy.get_names()
 
 
 class NameIndex:
@@ -41,10 +42,13 @@ class NameIndex:
         self._name_cache = None
 
     def get_names(self, pattern=''):
-        """Get all names that contain `pattern`.
+        """Get all names that start with `pattern`.
+
+        Return: An iterable of `(name, module-name)` tuples where each `name`
+            matches `pattern`. These tuples are not guaranteed to be unique.
         """
-        return (name
-                for name in self._cache
+        return ((name, module_name)
+                for (name, module_name) in self._cache
                 if pattern in name)
 
     def clear_cache(self):

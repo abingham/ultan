@@ -13,6 +13,8 @@ from functools import singledispatch
 from importlib.machinery import FileFinder
 from zipimport import zipimporter, ZipImportError
 
+from ultan.strategies.strategy import Strategy
+
 
 log = logging.getLogger()
 
@@ -83,21 +85,22 @@ def _(finder, module_name):
     return source
 
 
-def get_names():
-    """Get an iterable of all names that can be found.
-    """
-    for minfo in pkgutil.walk_packages():
-        finder, module_name, ispkg = minfo
+class ASTWalkerStrategy(Strategy):
+    def get_names(self):
+        """Get an iterable of all names that can be found.
+        """
+        for minfo in pkgutil.walk_packages():
+            finder, module_name, ispkg = minfo
 
-        source = _get_source(finder, module_name)
+            source = _get_source(finder, module_name)
 
-        if source is None:
-            log.info('no source found for module %s', module_name)
-            continue
+            if source is None:
+                log.info('no source found for module %s', module_name)
+                continue
 
-        try:
-            tree = ast.parse(source)
-            for name in _find_top_level_ast_names(tree):
-                yield '{}.{}'.format(module_name, name)
-        except SyntaxError:
-            log.info('syntax error in module %s', name)
+            try:
+                tree = ast.parse(source)
+                for name in _find_top_level_ast_names(tree):
+                    yield (name, module_name)
+            except SyntaxError:
+                log.info('syntax error in module %s', name)

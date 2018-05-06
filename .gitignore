@@ -10,3 +10,4 @@ site
 *pyc
 .tox
 .cache
+.pytest_cache
