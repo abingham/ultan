@@ -5,6 +5,7 @@ import docopt_subcommands as dsc
 
 from . import version
 from .name_index import NameIndex
+from ultan.get_doc import get_doc
 
 
 @dsc.command()
@@ -20,6 +21,15 @@ def names_handler(args):
 
     for (name, module_name) in index.get_names(args['<pattern>']):
         print('{} [in {}]'.format(name, module_name))
+
+
+@dsc.command()
+def doc_handler(args):
+    """usage: {program} doc <name>
+
+    Get the docstring for a Python object.
+    """
+    print(get_doc(args['<name>']))
 
 
 def main(args=None):
